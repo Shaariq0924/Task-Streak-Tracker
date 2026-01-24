@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import axios from "axios";
 import { motion } from "framer-motion";
-import { Plus, Tag, Calendar, ArrowLeft, Check } from "lucide-react";
+import { Plus, ArrowLeft, Check } from "lucide-react";
 import { Category } from "../types";
 
 export default function CreateTask() {
@@ -104,8 +104,8 @@ export default function CreateTask() {
                                                 type="button"
                                                 onClick={() => setSelectedCategoryId(cat._id)}
                                                 className={`p-3 rounded-xl border text-sm font-medium transition-all text-left flex items-center justify-between group ${selectedCategoryId === cat._id
-                                                        ? "bg-primary/20 border-primary text-primary"
-                                                        : "bg-card border-border text-muted-foreground hover:border-primary/50"
+                                                    ? "bg-primary/20 border-primary text-primary"
+                                                    : "bg-card border-border text-muted-foreground hover:border-primary/50"
                                                     }`}
                                             >
                                                 {cat.name}

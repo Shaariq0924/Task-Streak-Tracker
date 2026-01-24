@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { MessageSquare, Send, Sparkles, X, Minimize2, Maximize2 } from "lucide-react";
+import { Send, Sparkles, X, Minimize2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 

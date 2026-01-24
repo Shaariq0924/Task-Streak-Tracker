@@ -1,9 +1,16 @@
 import { useOutletContext } from "react-router-dom";
 import { TaskView } from "../components/TaskView";
 import { Category } from "../types";
-import { format, subDays, isSameDay, parseISO } from "date-fns";
+import { isSameDay, parseISO } from "date-fns";
 import { motion } from "framer-motion";
 import { TrendingUp, Award, Calendar, AlertCircle } from "lucide-react";
+
+// Helper to replace date-fns subDays
+const subDays = (date: Date, days: number) => {
+    const result = new Date(date);
+    result.setDate(result.getDate() - days);
+    return result;
+};
 
 interface DashboardContext {
     categories: Category[];
