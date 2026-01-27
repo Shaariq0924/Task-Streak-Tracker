@@ -104,6 +104,14 @@ router.put('/:id', auth, async (req, res) => {
         if (!task) return res.status(404).json({ msg: 'Task not found' });
         if (task.userId.toString() !== req.user.id) return res.status(401).json({ msg: 'Not authorized' });
 
+        // Check if this is a title update or completion toggle
+        const { title } = req.body;
+        if (title) {
+            task.title = title;
+            await task.save();
+            return res.json(task);
+        }
+
         // Toggle logic
         const willBeCompleted = !task.isCompleted;
         task.isCompleted = willBeCompleted;

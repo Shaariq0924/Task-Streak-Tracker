@@ -65,6 +65,7 @@ export function Layout() {
                 selectedCategoryId={selectedCategoryId}
                 onSelectCategory={setSelectedCategoryId}
                 onAddCategory={handleAddCategory}
+                onUpdateCategory={fetchCategories}
                 isOpen={isSidebarOpen}
                 onClose={() => setIsSidebarOpen(false)}
             />

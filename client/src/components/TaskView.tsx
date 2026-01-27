@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { CheckCircle2, Circle, Calendar, Flame, Trophy, Trash2 } from "lucide-react";
+import { CheckCircle2, Circle, Calendar, Flame, Trophy, Trash2, Pencil } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 import axios from "axios";
@@ -28,6 +28,37 @@ export function TaskView({ categoryId, categories, onUpdateCategory }: TaskViewP
     const [tasks, setTasks] = useState<Task[]>([]);
     const [newTaskTitle, setNewTaskTitle] = useState("");
     const [loading, setLoading] = useState(false);
+
+    // Edit State
+    const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
+    const [editingTaskTitle, setEditingTaskTitle] = useState("");
+
+    const startEditingTask = (task: Task) => {
+        setEditingTaskId(task._id);
+        setEditingTaskTitle(task.title);
+    };
+
+    const handleEditTask = async (taskId: string) => {
+        if (!editingTaskTitle.trim()) {
+            setEditingTaskId(null);
+            return;
+        }
+
+        // Optimistic update
+        setTasks(tasks.map(t =>
+            t._id === taskId ? { ...t, title: editingTaskTitle } : t
+        ));
+        setEditingTaskId(null);
+
+        try {
+            await axios.put(`${import.meta.env.VITE_API_URL}/api/tasks/${taskId}`, {
+                title: editingTaskTitle
+            });
+        } catch (error) {
+            console.error("Error editing task", error);
+            fetchTasks(); // Revert
+        }
+    };
 
     const selectedCategory = categories.find(c => c._id === categoryId);
 
@@ -175,17 +206,53 @@ export function TaskView({ categoryId, categories, onUpdateCategory }: TaskViewP
                                 )}
                             </button>
 
-                            <span className={`flex-1 font-medium transition-all ${task.isCompleted ? "text-slate-500 line-through decoration-slate-600" : "text-slate-200"
-                                }`}>
-                                {task.title}
-                            </span>
+                            <div className="flex-1">
+                                {editingTaskId === task._id ? (
+                                    <form
+                                        onSubmit={(e) => {
+                                            e.preventDefault();
+                                            handleEditTask(task._id);
+                                        }}
+                                        className="w-full"
+                                    >
+                                        <input
+                                            autoFocus
+                                            type="text"
+                                            value={editingTaskTitle}
+                                            onChange={(e) => setEditingTaskTitle(e.target.value)}
+                                            onBlur={() => handleEditTask(task._id)}
+                                            className="w-full bg-slate-800 border-b border-blue-500 text-slate-200 focus:outline-none py-1"
+                                        />
+                                    </form>
+                                ) : (
+                                    <span
+                                        onClick={() => !task.isCompleted && startEditingTask(task)}
+                                        className={`font-medium transition-all block cursor-text ${task.isCompleted ? "text-slate-500 line-through decoration-slate-600" : "text-slate-200"
+                                            }`}
+                                    >
+                                        {task.title}
+                                    </span>
+                                )}
+                            </div>
 
-                            <button
-                                onClick={() => deleteTask(task._id)}
-                                className="opacity-0 group-hover:opacity-100 text-slate-600 hover:text-red-400 transition-all p-2 hover:bg-red-500/10 rounded-lg"
-                            >
-                                <Trash2 size={18} />
-                            </button>
+                            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                {!task.isCompleted && editingTaskId !== task._id && (
+                                    <button
+                                        onClick={() => startEditingTask(task)}
+                                        className="p-2 text-slate-600 hover:text-blue-400 transition-all hover:bg-blue-500/10 rounded-lg"
+                                        title="Edit Task"
+                                    >
+                                        <Pencil size={18} />
+                                    </button>
+                                )}
+                                <button
+                                    onClick={() => deleteTask(task._id)}
+                                    className="text-slate-600 hover:text-red-400 transition-all p-2 hover:bg-red-500/10 rounded-lg"
+                                    title="Delete Task"
+                                >
+                                    <Trash2 size={18} />
+                                </button>
+                            </div>
                         </motion.div>
                     ))}
                 </AnimatePresence>

@@ -1,26 +1,49 @@
 import { useState } from "react";
-import { Plus, Flame, Hexagon, LogOut, X, LayoutDashboard, Calendar, BarChart3, Moon, Sun, Monitor, PlusCircle } from "lucide-react";
+import { Plus, Flame, Hexagon, LogOut, X, LayoutDashboard, Calendar, BarChart3, Moon, Sun, Monitor, PlusCircle, Pencil } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 import { Category } from "../types";
+import axios from "axios";
 
 interface SidebarProps {
     categories: Category[];
     selectedCategoryId: string | null;
     onSelectCategory: (id: string) => void;
     onAddCategory: (name: string) => void;
+    onUpdateCategory?: () => void;
     isOpen?: boolean;
     onClose?: () => void;
 }
 
-export function Sidebar({ categories, selectedCategoryId, onSelectCategory, onAddCategory, isOpen = false, onClose }: SidebarProps) {
+export function Sidebar({ categories, selectedCategoryId, onSelectCategory, onAddCategory, onUpdateCategory, isOpen = false, onClose }: SidebarProps) {
     const { user, logout } = useAuth();
     const { theme, setTheme } = useTheme();
     const [isAdding, setIsAdding] = useState(false);
     const [newCategoryName, setNewCategoryName] = useState("");
+    const [isEditing, setIsEditing] = useState<string | null>(null);
+    const [editingName, setEditingName] = useState("");
     const location = useLocation();
+
+    const startEditing = (cat: Category) => {
+        setIsEditing(cat._id);
+        setEditingName(cat.name);
+    };
+
+    const handleRename = async (id: string) => {
+        if (!editingName.trim()) {
+            setIsEditing(null);
+            return;
+        }
+        try {
+            await axios.put(`${import.meta.env.VITE_API_URL}/api/tasks/categories/${id}`, { name: editingName });
+            if (onUpdateCategory) onUpdateCategory();
+            setIsEditing(null);
+        } catch (error) {
+            console.error("Error renaming category", error);
+        }
+    };
 
     const handleAddSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -100,25 +123,57 @@ export function Sidebar({ categories, selectedCategoryId, onSelectCategory, onAd
                         </div>
 
                         {categories.map((cat) => (
-                            <button
-                                key={cat._id}
-                                onClick={() => {
-                                    onSelectCategory(cat._id);
-                                    onClose?.();
-                                }}
-                                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all ${selectedCategoryId === cat._id && location.pathname === "/"
-                                    ? "bg-muted text-foreground shadow-sm"
-                                    : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
-                                    }`}
-                            >
-                                <span className="font-medium truncate text-sm">{cat.name}</span>
-                                {cat.currentStreak > 0 && (
-                                    <span className="flex items-center gap-1 text-[10px] font-bold text-orange-500 bg-orange-500/10 px-1.5 py-0.5 rounded-full">
-                                        <Flame size={10} className="fill-orange-500" />
-                                        {cat.currentStreak}
-                                    </span>
+                            <div key={cat._id} className="group/item relative">
+                                {isEditing === cat._id ? (
+                                    <form
+                                        onSubmit={(e) => {
+                                            e.preventDefault();
+                                            handleRename(cat._id);
+                                        }}
+                                        className="px-3 py-2"
+                                    >
+                                        <input
+                                            autoFocus
+                                            type="text"
+                                            value={editingName}
+                                            onChange={(e) => setEditingName(e.target.value)}
+                                            onBlur={() => handleRename(cat._id)}
+                                            className="w-full bg-slate-900 border border-blue-500 rounded-lg px-2 py-1 text-sm text-white focus:outline-none"
+                                        />
+                                    </form>
+                                ) : (
+                                    <button
+                                        onClick={() => {
+                                            onSelectCategory(cat._id);
+                                            onClose?.();
+                                        }}
+                                        className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all ${selectedCategoryId === cat._id && location.pathname === "/"
+                                            ? "bg-muted text-foreground shadow-sm"
+                                            : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                                            }`}
+                                    >
+                                        <span className="font-medium truncate text-sm">{cat.name}</span>
+                                        {cat.currentStreak > 0 && (
+                                            <span className="flex items-center gap-1 text-[10px] font-bold text-orange-500 bg-orange-500/10 px-1.5 py-0.5 rounded-full">
+                                                <Flame size={10} className="fill-orange-500" />
+                                                {cat.currentStreak}
+                                            </span>
+                                        )}
+                                    </button>
                                 )}
-                            </button>
+                                {!isEditing && (
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            startEditing(cat);
+                                        }}
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-slate-500 hover:text-blue-400 opacity-0 group-hover/item:opacity-100 transition-opacity bg-card shadow-sm rounded-md border border-border"
+                                        title="Rename List"
+                                    >
+                                        <Pencil size={12} />
+                                    </button>
+                                )}
+                            </div>
                         ))}
 
                         {isAdding ? (
