@@ -2,8 +2,6 @@
 
 TaskStreak is a modern, full-stack MERN application designed to help you organize your life, track your habits, and maintain consistency. It features a beautiful glassmorphism UI, detailed analytics, and an integrated AI assistant.
 
-![Project Screenshot](https://via.placeholder.com/1200x600?text=TaskStreak+Dashboard+Preview)
-
 ## ✨ Features
 
 - **🛡️ Authentication**: Secure Login and Signup with JWT.
