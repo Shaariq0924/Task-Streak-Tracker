@@ -1,93 +1,139 @@
 # TaskStreak - Daily Task & Habit Tracker
 
-TaskStreak is a modern, full-stack MERN application designed to help you organize your life, track your habits, and maintain consistency. It features a beautiful glassmorphism UI, detailed analytics, and an integrated AI assistant.
+TaskStreak is a premium, high-performance productivity application designed to help you build unshakeable habits. It combines a modern "Atlassian-style" interface with gamified consistency challenges and beautiful aesthetics (including a Ghibli-inspired animated theme).
 
-## ✨ Features
+![Project Preview](/client/public/ghibli.png)
 
-- **🛡️ Authentication**: Secure Login and Signup with JWT.
-- **📝 Task Management**: Create, Read, Update (Edit), and Delete tasks.
-- **📂 Categories & Lists**: Organize tasks into custom categories (e.g., Work, Personal, Fitness).
-- **🔥 Streak Tracking**: Visual streak counters for each category to keep you motivated.
-- **📊 Analytics Dashboard**: 
-  - Weekly, Monthly, and Yearly consistency tracking.
-  - Smart suggestions based on your performance.
-- **🤖 AI Assistant**: Built-in Gemini AI chat to help with productivity tips and motivation.
-- **🎨 Modern UI/UX**: 
-  - Glassmorphism design aesthetic.
-  - **Dark/Light/System** theme switching.
-  - Smooth animations with Framer Motion.
-- **📱 Fully Responsive**: Works seamlessly on Desktop and Mobile. behavior.
+## ✨ Unique Features
+
+-   **🎨 Ghibli-Style Dynamic Theme**: A beautiful, animated landscape background that brings your dashboard to life with a "Ken Burns" zoom effect.
+-   **🌑 True Black Dark Mode**: A deep, OLED-friendly "Neutral Black" theme designed for focus and aesthetics (no slate-blue tints).
+-   **📅 Consistency Challenge**:
+    -   Commit to **25, 50, or 100-day** challenges.
+    -   Visual grid tracking with progress bars.
+    -   **Undo Capability**: Mistakenly marked a day? Just click again to undo.
+-   **ℹ️ Dashboard Info Hub**: A dedicated "Info" section explaining the core mission: **Momentum, Focus, and Growth**.
+-   **🛡️ Secure Authentication**: Robust Login/Signup system with JWT, ensuring your data is private.
+-   **🤖 AI Coach Integration**: built-in Gemini AI chat to get productivity advice instantly.
+-   **📝 Smart Task Management**:
+    -   Organize by categories (Work, Personal, etc.).
+    -   **Creation Date Tracking**: See exactly when you started each task.
+    -   Edit, Delete, and Complete with smooth animations.
 
 ## 🛠️ Tech Stack
 
 ### Frontend
-- **React** (Vite)
-- **TypeScript**
-- **Tailwind CSS** (Styling)
-- **Framer Motion** (Animations)
-- **Lucide React** (Icons)
-- **Axios** (API Requests)
+-   **Framework**: React (Vite) + TypeScript
+-   **Styling**: Tailwind CSS + Framer Motion (Animations)
+-   **Icons**: Lucide React
+-   **State/Network**: Context API + Axios
 
 ### Backend
-- **Node.js** & **Express**
-- **MongoDB** (Database)
-- **Mongoose** (ODM)
-- **JWT** (Authentication)
-- **Google Gemini API** (AI)
+-   **Runtime**: Node.js & Express
+-   **Database**: MongoDB (Mongoose Schema)
+-   **Security**: JSON Web Tokens (JWT) & Bcrypt
+-   **AI**: Google Generative AI (Gemini)
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js (v18+)
-- MongoDB Atlas Account (or local MongoDB)
-- Google Gemini API Key
+-   Node.js (v18+)
+-   MongoDB Atlas URI
+-   Google Gemini API Key
 
 ### Installation
 
-1.  **Clone the repository**
+1.  **Clone the Repo**
     ```bash
-    git clone https://github.com/yourusername/task-streak-tracker.git
-    cd task-streak-tracker
+    git clone https://github.com/yourusername/task-streak.git
+    cd task-streak
     ```
 
-2.  **Install Dependencies**
+2.  **Server Setup**
     ```bash
-    # Install server dependencies
     cd server
     npm install
-
-    # Install client dependencies
-    cd ../client
-    npm install
-    # or
-    npm install --force # if facing peer dependency issues
     ```
-
-3.  **Environment Variables**
-    Create a `.env` file in the `server` folder:
+    Create a `.env` file in the `server` directory:
     ```env
     PORT=5000
     MONGODB_URI=your_mongodb_connection_string
-    JWT_SECRET=your_jwt_secret_key
+    JWT_SECRET=your_secret_key
     GOOGLE_API_KEY=your_gemini_api_key
     ```
+    Start the server:
+    ```bash
+    npm run dev
+    ```
 
-    Create a `.env` file in the `client` folder:
+3.  **Client Setup**
+    Open a new terminal:
+    ```bash
+    cd client
+    npm install
+    ```
+    Create a `.env` file in the `client` directory:
     ```env
     VITE_API_URL=http://localhost:5000
     ```
-
-4.  **Run Locally**
-    Open two terminals:
-
-    *Terminal 1 (Server):*
+    Start the frontend:
     ```bash
-    cd server
     npm run dev
     ```
 
-    *Terminal 2 (Client):*
-    ```bash
-    cd client
-    npm run dev
-    ```
+## 📸 Screenshots
+
+### Consistency Challenge
+Track your 25, 50, or 100-day journey with an interactive grid.
+
+### True Black Dashboard
+A distraction-free, high-contrast interface for maximum productivity.
+
+---
+
+## 📖 User Guide
+
+Welcome to DAILYTASK! Here is how to get the most out of your productivity tracker.
+
+### Getting Started
+
+1.  **Sign Up**: Create an account to save your progress in the cloud.
+2.  **Create Lists**: Organize tasks by category (e.g., Work, Personal, Gym).
+3.  **Add Tasks**: Click the "+" button or "Create Task" in the sidebar.
+
+### Features
+
+#### 🏆 Consistency Challenge
+Build unbreakable habits.
+1.  Navigate to **Challenge** in the sidebar.
+2.  Select your duration: **25 Days**, **50 Days**, or **100 Days**.
+3.  Each day you complete your core tasks, click the corresponding day box.
+4.  **Undo**: Click a completed box again to remove the checkmark if you made a mistake.
+5.  Watch your progress bar fill up!
+
+#### 📊 Analytics
+See your growth.
+- Check your **Current Streak**.
+- View completion rates across different categories.
+
+#### 🌑 Theme
+Customize your view.
+- By default, the app uses a **True Black / Premium Dark Mode**.
+- Toggle to **Light Mode** using the sun icon in the sidebar footer if preferred.
+
+#### 🤖 AI Coach
+Need motivation?
+- Click the **Ask AI** button in the bottom right.
+- Chat with your personal productivity assistant powered by Gemini.
+
+---
+
+## 🤝 Contributing
+1.  Fork the Project
+2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3.  Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4.  Push to the Branch (`git push origin feature/AmazingFeature`)
+5.  Open a Pull Request
+
+## 📄 License
+Distributed under the MIT License.

@@ -53,12 +53,27 @@ export function Layout() {
     };
 
     return (
-        <div className="flex h-screen bg-slate-950 text-slate-200 font-sans overflow-hidden selection:bg-blue-500/30 selection:text-blue-200">
-            {/* Background Gradients */}
-            <div className="fixed inset-0 z-0 pointer-events-none">
-                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/10 rounded-full blur-[120px]" />
-                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-500/10 rounded-full blur-[120px]" />
+        <div className="flex h-screen bg-background text-foreground font-sans overflow-hidden selection:bg-purple-500/30 selection:text-purple-200 relative">
+            {/* Animated Ghibli Background */}
+            <div className="fixed inset-0 z-0 pointer-events-none opacity-20 dark:opacity-10">
+                <img
+                    src="/ghibli.png"
+                    alt="Background"
+                    className="w-full h-full object-cover blur-sm animate-ken-burns"
+                />
+                <div className="absolute inset-0 bg-background/80" />
             </div>
+
+            <style>{`
+                @keyframes ken-burns {
+                    0% { transform: scale(1) translate(0, 0); }
+                    50% { transform: scale(1.1) translate(-1%, -1%); }
+                    100% { transform: scale(1) translate(0, 0); }
+                }
+                .animate-ken-burns {
+                    animation: ken-burns 30s infinite ease-in-out;
+                }
+            `}</style>
 
             <Sidebar
                 categories={categories}

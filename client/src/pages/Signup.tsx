@@ -26,11 +26,12 @@ export default function Signup() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-slate-950 px-4">
+
+        <div className="min-h-screen flex items-center justify-center bg-background px-4">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="max-w-md w-full bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-8 shadow-2xl"
+                className="max-w-md w-full bg-card/50 backdrop-blur-xl border border-border/50 rounded-2xl p-8 shadow-2xl"
             >
                 <div className="text-center mb-8">
                     <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">

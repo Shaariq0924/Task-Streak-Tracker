@@ -7,11 +7,13 @@ import Analytics from './pages/Analytics';
 import Calendar from './pages/Calendar';
 import { Layout } from './components/Layout';
 import CreateTask from './pages/CreateTask';
+import ConsistencyChallenge from './pages/ConsistencyChallenge';
+import About from './pages/About';
 
 function PrivateRoute({ children }: { children: JSX.Element }) {
     const { token, loading } = useAuth();
 
-    if (loading) return <div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-500">Loading...</div>;
+    if (loading) return <div className="min-h-screen bg-black flex items-center justify-center text-slate-500">Loading...</div>;
 
     return token ? children : <Navigate to="/login" />;
 }
@@ -19,7 +21,7 @@ function PrivateRoute({ children }: { children: JSX.Element }) {
 function PublicRoute({ children }: { children: JSX.Element }) {
     const { token, loading } = useAuth();
 
-    if (loading) return <div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-500">Loading...</div>;
+    if (loading) return <div className="min-h-screen bg-black flex items-center justify-center text-slate-500">Loading...</div>;
 
     return !token ? children : <Navigate to="/" />;
 }
@@ -34,6 +36,8 @@ function App() {
                 <Route index element={<Dashboard />} />
                 <Route path="analytics" element={<Analytics />} />
                 <Route path="calendar" element={<Calendar />} />
+                <Route path="challenge" element={<ConsistencyChallenge />} />
+                <Route path="about" element={<About />} />
                 <Route path="create-task" element={<CreateTask />} />
             </Route>
         </Routes>

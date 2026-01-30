@@ -138,7 +138,7 @@ export function TaskView({ categoryId, categories, onUpdateCategory }: TaskViewP
     const progress = tasks.length > 0 ? (completedCount / tasks.length) * 100 : 0;
 
     return (
-        <div className="flex-1 bg-slate-950 p-8 overflow-y-auto">
+        <div className="flex-1 p-8 overflow-y-auto">
             <header className="mb-8">
                 <div className="flex justify-between items-end mb-4">
                     <div>
@@ -179,7 +179,7 @@ export function TaskView({ categoryId, categories, onUpdateCategory }: TaskViewP
                     value={newTaskTitle}
                     onChange={(e) => setNewTaskTitle(e.target.value)}
                     placeholder="Add a new task..."
-                    className="w-full bg-slate-900/50 border border-slate-800 rounded-2xl px-6 py-4 text-slate-200 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all shadow-lg shadow-black/20"
+                    className="w-full bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl px-6 py-4 text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-lg shadow-black/20"
                 />
             </form>
 
@@ -194,8 +194,8 @@ export function TaskView({ categoryId, categories, onUpdateCategory }: TaskViewP
                             exit={{ opacity: 0, x: -20 }}
                             layout
                             className={`group flex items-center gap-4 p-4 rounded-xl border transition-all ${task.isCompleted
-                                ? "bg-slate-900/30 border-slate-800/50 opacity-60"
-                                : "bg-slate-900 border-slate-800 hover:border-slate-700 hover:shadow-lg hover:shadow-blue-500/5"
+                                ? "bg-muted/50 border-border/50 opacity-60"
+                                : "bg-card/50 backdrop-blur-sm border-border/50 hover:border-border hover:shadow-lg hover:shadow-primary/5"
                                 }`}
                         >
                             <button onClick={() => toggleTask(task._id)} className="shrink-0 transition-transform active:scale-95">
@@ -225,13 +225,20 @@ export function TaskView({ categoryId, categories, onUpdateCategory }: TaskViewP
                                         />
                                     </form>
                                 ) : (
-                                    <span
-                                        onClick={() => !task.isCompleted && startEditingTask(task)}
-                                        className={`font-medium transition-all block cursor-text ${task.isCompleted ? "text-slate-500 line-through decoration-slate-600" : "text-slate-200"
-                                            }`}
-                                    >
-                                        {task.title}
-                                    </span>
+                                    <div className="flex flex-col">
+                                        <span
+                                            onClick={() => !task.isCompleted && startEditingTask(task)}
+                                            className={`font-medium transition-all block cursor-text ${task.isCompleted ? "text-slate-500 line-through decoration-slate-600" : "text-slate-200"
+                                                }`}
+                                        >
+                                            {task.title}
+                                        </span>
+                                        {task.createdAt && (
+                                            <span className="text-[10px] text-slate-500 font-medium mt-0.5">
+                                                Added {format(new Date(task.createdAt), "MMM d, h:mm a")}
+                                            </span>
+                                        )}
+                                    </div>
                                 )}
                             </div>
 

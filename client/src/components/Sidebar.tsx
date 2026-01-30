@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Flame, Hexagon, LogOut, X, LayoutDashboard, Calendar, BarChart3, Moon, Sun, Monitor, PlusCircle, Pencil } from "lucide-react";
+import { Plus, Flame, Hexagon, LogOut, X, LayoutDashboard, Calendar, BarChart3, Moon, Sun, PlusCircle, Pencil, Medal, Info } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
 import { motion, AnimatePresence } from "framer-motion";
@@ -59,6 +59,8 @@ export function Sidebar({ categories, selectedCategoryId, onSelectCategory, onAd
         { icon: PlusCircle, label: "Create Task", path: "/create-task" },
         { icon: Calendar, label: "Calendar", path: "/calendar" },
         { icon: BarChart3, label: "Analytics", path: "/analytics" },
+        { icon: Medal, label: "Challenge", path: "/challenge" },
+        { icon: Info, label: "Info", path: "/about" },
     ];
 
     return (
@@ -207,18 +209,14 @@ export function Sidebar({ categories, selectedCategoryId, onSelectCategory, onAd
                         <button
                             onClick={() => setTheme("light")}
                             className={`flex-1 p-1.5 rounded-md flex items-center justify-center transition-all ${theme === "light" ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                            title="Light Mode"
                         >
                             <Sun size={16} />
                         </button>
                         <button
-                            onClick={() => setTheme("system")}
-                            className={`flex-1 p-1.5 rounded-md flex items-center justify-center transition-all ${theme === "system" ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
-                        >
-                            <Monitor size={16} />
-                        </button>
-                        <button
                             onClick={() => setTheme("dark")}
                             className={`flex-1 p-1.5 rounded-md flex items-center justify-center transition-all ${theme === "dark" ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                            title="Dark Mode"
                         >
                             <Moon size={16} />
                         </button>
