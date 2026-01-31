@@ -105,34 +105,94 @@ router.put('/:id', auth, async (req, res) => {
         if (task.userId.toString() !== req.user.id) return res.status(401).json({ msg: 'Not authorized' });
 
         // Check if this is a title update or completion toggle
-        const { title } = req.body;
-        if (title) {
+        const { title, isCompleted } = req.body;
+
+        if (title !== undefined) {
             task.title = title;
-            await task.save();
-            return res.json(task);
         }
 
-        // Toggle logic
-        const willBeCompleted = !task.isCompleted;
-        task.isCompleted = willBeCompleted;
-        task.completedAt = willBeCompleted ? new Date() : null;
-        await task.save();
+        // Toggle logic or Explicit Set
+        if (isCompleted !== undefined) {
+            task.isCompleted = isCompleted;
+        } else if (title === undefined) {
+            // Only toggle if no specific fields provided (ignoring just title update)
+            task.isCompleted = !task.isCompleted;
+        }
 
-        // Streak Logic
-        if (willBeCompleted) {
-            const category = await TaskCategory.findById(task.categoryId);
+        // Validation: If marking as completed, check if task is from today
+        if (task.isCompleted) {
+            const taskDate = new Date(task.createdAt);
+            taskDate.setHours(0, 0, 0, 0);
             const today = new Date();
             today.setHours(0, 0, 0, 0);
 
-            let lastDate = category.lastCompletedDate ? new Date(category.lastCompletedDate) : null;
-            if (lastDate) lastDate.setHours(0, 0, 0, 0);
+            // Allow completing only if task was created today (or strictly not in the past?)
+            // User said: "not completed on the day when it was added"
+            // So if today > taskDate, it's expired.
+            if (taskDate < today) {
+                return res.status(400).json({ msg: 'Cannot complete tasks from previous days.' });
+            }
+        }
 
-            // If not completed today, increment streak
-            if (!lastDate || lastDate < today) {
-                category.currentStreak += 1;
-                category.lastCompletedDate = new Date();
-                category.history.push(new Date());
-                await category.save();
+        // Handle completion date
+        if (task.isCompleted) {
+            if (!task.completedAt) task.completedAt = new Date();
+        } else {
+            task.completedAt = null;
+        }
+
+        await task.save();
+
+        // Streak Logic
+        const category = await TaskCategory.findById(task.categoryId);
+        if (category) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            if (task.isCompleted) {
+                // INCREMENT LOGIC
+                let lastDate = category.lastCompletedDate ? new Date(category.lastCompletedDate) : null;
+                if (lastDate) lastDate.setHours(0, 0, 0, 0);
+
+                // If not completed today, increment streak
+                if (!lastDate || lastDate < today) {
+                    category.currentStreak += 1;
+                    category.lastCompletedDate = new Date();
+                    category.history.push(new Date());
+                    await category.save();
+                }
+            } else {
+                // DECREMENT LOGIC (Revert if unchecking)
+                // Check if any OTHER tasks are completed today for this category
+                const startOfDay = new Date();
+                startOfDay.setHours(0, 0, 0, 0);
+                const endOfDay = new Date();
+                endOfDay.setHours(23, 59, 59, 999);
+
+                const completedTodayCount = await Task.countDocuments({
+                    categoryId: task.categoryId,
+                    isCompleted: true,
+                    completedAt: { $gte: startOfDay, $lte: endOfDay },
+                    _id: { $ne: task._id } // Exclude current task
+                });
+
+                if (completedTodayCount === 0) {
+                    // No other tasks completed today -> Revert streak
+                    // Only revert if we actually incremented it today (lastCompletedDate is today)
+                    let lastDate = category.lastCompletedDate ? new Date(category.lastCompletedDate) : null;
+                    if (lastDate) lastDate.setHours(0, 0, 0, 0);
+
+                    if (lastDate && lastDate.getTime() === today.getTime()) {
+                        category.history.pop(); // Remove today's entry
+                        // Revert to pervious date
+                        const previousDateStr = category.history.length > 0 ? category.history[category.history.length - 1] : null;
+                        category.lastCompletedDate = previousDateStr ? new Date(previousDateStr) : null;
+
+                        // Decrement streak, ensure not negative
+                        category.currentStreak = Math.max(0, category.currentStreak - 1);
+                        await category.save();
+                    }
+                }
             }
         }
 

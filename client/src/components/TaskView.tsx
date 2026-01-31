@@ -102,12 +102,37 @@ export function TaskView({ categoryId, categories, onUpdateCategory }: TaskViewP
 
     const toggleTask = async (taskId: string) => {
         try {
+            // Determine new status based on current state
+            const task = tasks.find(t => t._id === taskId);
+            if (!task) return;
+
+            // Check if task is expired (created before today)
+            const taskDate = new Date(task.createdAt);
+            taskDate.setHours(0, 0, 0, 0);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            if (!task.isCompleted && taskDate < today) {
+                // Prevent ticking if expired and not completed
+                return;
+            }
+
+            const newStatus = !task.isCompleted;
+
             // Optimistic update
-            setTasks(tasks.map(t =>
-                t._id === taskId ? { ...t, isCompleted: !t.isCompleted } : t
+            setTasks(prev => prev.map(t =>
+                t._id === taskId ? { ...t, isCompleted: newStatus } : t
             ));
 
-            await axios.put(`${import.meta.env.VITE_API_URL}/api/tasks/${taskId}`);
+            const res = await axios.put(`${import.meta.env.VITE_API_URL}/api/tasks/${taskId}`, {
+                isCompleted: newStatus
+            });
+
+            // Confirm with server state to prevent desync
+            setTasks(prev => prev.map(t =>
+                t._id === taskId ? res.data : t
+            ));
+
             onUpdateCategory(); // Refresh streaks
         } catch (error) {
             console.error("Error toggling task", error);
@@ -198,11 +223,22 @@ export function TaskView({ categoryId, categories, onUpdateCategory }: TaskViewP
                                 : "bg-card/50 backdrop-blur-sm border-border/50 hover:border-border hover:shadow-lg hover:shadow-primary/5"
                                 }`}
                         >
-                            <button onClick={() => toggleTask(task._id)} className="shrink-0 transition-transform active:scale-95">
+                            <button
+                                onClick={() => toggleTask(task._id)}
+                                disabled={!task.isCompleted && new Date(task.createdAt).setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0)}
+                                className={`shrink-0 transition-transform active:scale-95 ${!task.isCompleted && new Date(task.createdAt).setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0)
+                                    ? "opacity-50 cursor-not-allowed"
+                                    : ""
+                                    }`}
+                            >
                                 {task.isCompleted ? (
                                     <CheckCircle2 className="text-blue-500" size={24} />
                                 ) : (
-                                    <Circle className="text-slate-600 group-hover:text-blue-400 transition-colors" size={24} />
+                                    new Date(task.createdAt).setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0) ? (
+                                        <Circle className="text-slate-700" size={24} />
+                                    ) : (
+                                        <Circle className="text-slate-600 group-hover:text-blue-400 transition-colors" size={24} />
+                                    )
                                 )}
                             </button>
 
