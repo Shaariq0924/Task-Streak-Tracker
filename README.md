@@ -2,8 +2,6 @@
 
 TaskStreak is a premium, high-performance productivity application designed to help you build unshakeable habits. It combines a modern "Atlassian-style" interface with gamified consistency challenges and beautiful aesthetics (including a Ghibli-inspired animated theme).
 
-![Project Preview](/client/public/ghibli.png)
-
 ## ✨ Unique Features
 
 -   **🎨 Ghibli-Style Dynamic Theme**: A beautiful, animated landscape background that brings your dashboard to life with a "Ken Burns" zoom effect.
