@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { CheckCircle2, Circle, Calendar, Flame, Trophy, Trash2, Pencil } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
-import axios from "axios";
+import api from "../utils/api";
 
 interface Task {
     _id: string;
@@ -51,7 +51,7 @@ export function TaskView({ categoryId, categories, onUpdateCategory }: TaskViewP
         setEditingTaskId(null);
 
         try {
-            await axios.put(`${import.meta.env.VITE_API_URL}/api/tasks/${taskId}`, {
+            await api.put(`/api/tasks/${taskId}`, {
                 title: editingTaskTitle
             });
         } catch (error) {
@@ -71,7 +71,7 @@ export function TaskView({ categoryId, categories, onUpdateCategory }: TaskViewP
     const fetchTasks = async () => {
         try {
             setLoading(true);
-            const res = await axios.get(import.meta.env.VITE_API_URL + '/api/tasks');
+            const res = await api.get('/api/tasks');
             // Filter by category client-side or backend-side. 
             // Backend returns all tasks currently, let's filter here for simplicity or update backend to filter.
             // Current backend: returns all tasks for user.
@@ -89,7 +89,7 @@ export function TaskView({ categoryId, categories, onUpdateCategory }: TaskViewP
         if (!newTaskTitle.trim() || !categoryId) return;
 
         try {
-            const res = await axios.post(import.meta.env.VITE_API_URL + '/api/tasks', {
+            const res = await api.post('/api/tasks', {
                 title: newTaskTitle,
                 categoryId
             });
@@ -124,7 +124,7 @@ export function TaskView({ categoryId, categories, onUpdateCategory }: TaskViewP
                 t._id === taskId ? { ...t, isCompleted: newStatus } : t
             ));
 
-            const res = await axios.put(`${import.meta.env.VITE_API_URL}/api/tasks/${taskId}`, {
+            const res = await api.put(`/api/tasks/${taskId}`, {
                 isCompleted: newStatus
             });
 
@@ -143,7 +143,7 @@ export function TaskView({ categoryId, categories, onUpdateCategory }: TaskViewP
     const deleteTask = async (taskId: string) => {
         try {
             setTasks(tasks.filter(t => t._id !== taskId));
-            await axios.delete(`${import.meta.env.VITE_API_URL}/api/tasks/${taskId}`);
+            await api.delete(`/api/tasks/${taskId}`);
         } catch (error) {
             console.error("Error deleting task", error);
             fetchTasks();

@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Send, Sparkles, X, Minimize2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import axios from "axios";
+import api from "../utils/api";
 
 interface Message {
     id: string;
@@ -37,7 +37,7 @@ export function ChatWidget() {
         setIsLoading(true);
 
         try {
-            const res = await axios.post(import.meta.env.VITE_API_URL + '/api/chat', { message: input }, {
+            const res = await api.post('/api/chat', { message: input }, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -46,7 +46,7 @@ export function ChatWidget() {
             setMessages(prev => [...prev, aiMsg]);
         } catch (error: any) {
             console.error("Chat Error", error);
-            const errorMessage = error.response?.data?.error || "Sorry, I couldn't connect to the server (Check API Key).";
+            const errorMessage = error.response?.data?.error || "Sorry, I couldn't connect to the server.";
             const errorMsg: Message = { id: (Date.now() + 1).toString(), text: errorMessage, sender: 'ai' };
             setMessages(prev => [...prev, errorMsg]);
         } finally {

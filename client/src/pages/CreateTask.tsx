@@ -1,4 +1,3 @@
-```javascript
 import { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -108,11 +107,10 @@ export default function CreateTask() {
                                                 key={cat._id}
                                                 type="button"
                                                 onClick={() => setSelectedCategoryId(cat._id)}
-                                                className={`p - 3 rounded - xl border text - sm font - medium transition - all text - left flex items - center justify - between group ${
-    selectedCategoryId === cat._id
-    ? "bg-primary/20 border-primary text-primary"
-    : "bg-card border-border text-muted-foreground hover:border-primary/50"
-} `}
+                                                className={`p - 3 rounded - xl border text - sm font - medium transition - all text - left flex items - center justify - between group ${selectedCategoryId === cat._id
+                                                        ? "bg-primary/20 border-primary text-primary"
+                                                        : "bg-card border-border text-muted-foreground hover:border-primary/50"
+                                                    } `}
                                             >
                                                 {cat.name}
                                                 {selectedCategoryId === cat._id && <Check size={16} />}
