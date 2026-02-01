@@ -45,7 +45,7 @@ router.post('/signup', async (req, res) => {
         );
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ msg: 'Server Error' });
     }
 });
 
@@ -84,7 +84,7 @@ router.post('/login', async (req, res) => {
         );
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ msg: 'Server Error' });
     }
 });
 
@@ -97,7 +97,32 @@ router.get('/me', auth, async (req, res) => {
         res.json(user);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ msg: 'Server Error' });
+    }
+});
+
+// @route   POST api/auth/forgot-password
+// @desc    Initiate password reset
+// @access  Public
+router.post('/forgot-password', async (req, res) => {
+    try {
+        const { email } = req.body;
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            // Check if user doesn't exist, generic message to avoid enumeration
+            return res.status(200).json({ msg: 'If an account with that email exists, we have sent a reset link.' });
+        }
+
+        // TODO: Implement actual email sending logic here (using SendGrid/Nodemailer)
+        // For now, we simulate success
+        console.log(`Password reset requested for: ${email}`);
+
+        return res.status(200).json({ msg: 'If an account with that email exists, we have sent a reset link.' });
+
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ msg: 'Server Error' });
     }
 });
 
