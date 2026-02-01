@@ -1,8 +1,4 @@
-import { useState, useEffect } from "react";
-import { Outlet, useLocation } from "react-router-dom";
-import { Sidebar } from "./Sidebar";
-import { ChatWidget } from "./ChatWidget";
-import { useAuth } from "../context/AuthContext";
+
 import { useState, useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { Sidebar } from "./Sidebar";
