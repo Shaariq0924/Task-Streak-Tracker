@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CheckCircle2, ShieldCheck, CalendarClock, Trophy } from "lucide-react";
+import { CheckCircle2, CalendarClock, Trophy } from "lucide-react";
 import { format } from "date-fns";
 
 export default function ConsistencyChallenge() {
