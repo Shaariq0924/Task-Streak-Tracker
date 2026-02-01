@@ -3,7 +3,12 @@ import { Outlet, useLocation } from "react-router-dom";
 import { Sidebar } from "./Sidebar";
 import { ChatWidget } from "./ChatWidget";
 import { useAuth } from "../context/AuthContext";
-import axios from "axios";
+import { useState, useEffect } from "react";
+import { Outlet, useLocation } from "react-router-dom";
+import { Sidebar } from "./Sidebar";
+import { ChatWidget } from "./ChatWidget";
+import { useAuth } from "../context/AuthContext";
+import api from "../utils/api";
 import { Menu } from "lucide-react";
 import { Category } from "../types";
 
@@ -25,7 +30,7 @@ export function Layout() {
 
     const fetchCategories = async () => {
         try {
-            const res = await axios.get(import.meta.env.VITE_API_URL + '/api/tasks/categories');
+            const res = await api.get('/api/tasks/categories');
             setCategories(res.data);
             // Auto-select removed to allow Dashboard Overview
         } catch (error) {
@@ -35,7 +40,7 @@ export function Layout() {
 
     const handleAddCategory = async (name: string) => {
         try {
-            const res = await axios.post(import.meta.env.VITE_API_URL + '/api/tasks/categories', { name });
+            const res = await api.post('/api/tasks/categories', { name });
             setCategories([...categories, res.data]);
             setSelectedCategoryId(res.data._id);
         } catch (error) {

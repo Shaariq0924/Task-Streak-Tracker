@@ -1,51 +1,56 @@
+```javascript
 import { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
-import axios from "axios";
 import { motion } from "framer-motion";
-import { Plus, ArrowLeft, Check } from "lucide-react";
+import { Calendar as CalendarIcon, Clock, Tag, Plus, Check } from "lucide-react";
 import { Category } from "../types";
+import api from "../utils/api";
+
+interface DashboardContext {
+    categories: Category[];
+}
 
 export default function CreateTask() {
-    const { categories, fetchCategories } = useOutletContext<{ categories: Category[], fetchCategories: () => void }>();
+    const { categories } = useOutletContext<DashboardContext>();
     const navigate = useNavigate();
 
     const [title, setTitle] = useState("");
-    const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
+    const [categoryId, setCategoryId] = useState("");
+    const [deadline, setDeadline] = useState("");
     const [isCreatingCategory, setIsCreatingCategory] = useState(false);
     const [newCategoryName, setNewCategoryName] = useState("");
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        if (categories.length > 0 && !selectedCategoryId) {
-            setSelectedCategoryId(categories[0]._id);
+        if (categories.length > 0 && !categoryId) {
+            setCategoryId(categories[0]._id);
         }
     }, [categories]);
 
-    const handleCreateCategory = async (e: React.FormEvent) => {
-        e.preventDefault();
-        try {
-            const res = await axios.post(import.meta.env.VITE_API_URL + '/api/tasks/categories', {
-                name: newCategoryName
-            });
-            await fetchCategories();
-            setSelectedCategoryId(res.data._id);
-            setIsCreatingCategory(false);
-            setNewCategoryName("");
-        } catch (error) {
-            console.error("Error creating category", error);
-        }
-    };
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!title.trim() || !selectedCategoryId) return;
-
         setLoading(true);
         try {
-            await axios.post(import.meta.env.VITE_API_URL + '/api/tasks', {
+            let finalCategoryId = categoryId;
+
+            // If creating a new category on the fly
+            if (isCreatingCategory && newCategoryName.trim()) {
+                const res = await api.post('/api/tasks/categories', { name: newCategoryName });
+                finalCategoryId = res.data._id;
+            }
+
+            if (!finalCategoryId) {
+                alert("Please select or create a category");
+                setLoading(false);
+                return;
+            }
+
+            await api.post('/api/tasks', {
                 title,
-                categoryId: selectedCategoryId
+                categoryId: finalCategoryId,
+                deadline: deadline ? new Date(deadline) : undefined
             });
+
             navigate('/');
         } catch (error) {
             console.error("Error creating task", error);
@@ -103,10 +108,11 @@ export default function CreateTask() {
                                                 key={cat._id}
                                                 type="button"
                                                 onClick={() => setSelectedCategoryId(cat._id)}
-                                                className={`p-3 rounded-xl border text-sm font-medium transition-all text-left flex items-center justify-between group ${selectedCategoryId === cat._id
-                                                    ? "bg-primary/20 border-primary text-primary"
-                                                    : "bg-card border-border text-muted-foreground hover:border-primary/50"
-                                                    }`}
+                                                className={`p - 3 rounded - xl border text - sm font - medium transition - all text - left flex items - center justify - between group ${
+    selectedCategoryId === cat._id
+    ? "bg-primary/20 border-primary text-primary"
+    : "bg-card border-border text-muted-foreground hover:border-primary/50"
+} `}
                                             >
                                                 {cat.name}
                                                 {selectedCategoryId === cat._id && <Check size={16} />}

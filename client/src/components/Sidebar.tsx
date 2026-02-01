@@ -5,7 +5,7 @@ import { useTheme } from "../context/ThemeContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 import { Category } from "../types";
-import axios from "axios";
+import api from "../utils/api";
 
 interface SidebarProps {
     categories: Category[];
@@ -37,7 +37,7 @@ export function Sidebar({ categories, selectedCategoryId, onSelectCategory, onAd
             return;
         }
         try {
-            await axios.put(`${import.meta.env.VITE_API_URL}/api/tasks/categories/${id}`, { name: editingName });
+            await api.put(`/api/tasks/categories/${id}`, { name: editingName });
             if (onUpdateCategory) onUpdateCategory();
             setIsEditing(null);
         } catch (error) {
