@@ -21,6 +21,23 @@ app.get('/', (req, res) => {
     res.send('API is running...');
 });
 
+app.get('/api/health', (req, res) => {
+    const dbStatus = mongoose.connection.readyState;
+    const statusMap = {
+        0: 'disconnected',
+        1: 'connected',
+        2: 'connecting',
+        3: 'disconnecting',
+    };
+    res.json({
+        status: 'ok',
+        dbState: statusMap[dbStatus] || 'unknown',
+        env: {
+            mongoUriSet: !!process.env.MONGODB_URI
+        }
+    });
+});
+
 // Import Routes
 const authRoutes = require('./routes/auth');
 const taskRoutes = require('./routes/tasks');
