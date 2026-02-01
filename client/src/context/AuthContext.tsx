@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 
 interface User {
     id: string;
@@ -26,8 +26,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const fetchUser = async () => {
             if (token) {
                 try {
-                    axios.defaults.headers.common['x-auth-token'] = token;
-                    const res = await axios.get(import.meta.env.VITE_API_URL + '/api/auth/me');
+                    api.defaults.headers.common['x-auth-token'] = token;
+                    const res = await api.get('/api/auth/me');
                     setUser({
                         id: res.data._id,
                         username: res.data.username,
@@ -38,7 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     logout();
                 }
             } else {
-                delete axios.defaults.headers.common['x-auth-token'];
+                delete api.defaults.headers.common['x-auth-token'];
                 setUser(null);
             }
             setLoading(false);
@@ -56,7 +56,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.removeItem('token');
         setToken(null);
         setUser(null);
-        delete axios.defaults.headers.common['x-auth-token'];
+        delete api.defaults.headers.common['x-auth-token'];
     };
 
     return (

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import axios from 'axios';
+import api from '../utils/api';
 import { motion } from 'framer-motion';
 import { User, Mail, Lock, ArrowRight, Sparkles } from 'lucide-react';
 
@@ -17,7 +17,7 @@ export default function Signup() {
         e.preventDefault();
         setError('');
         try {
-            const res = await axios.post(import.meta.env.VITE_API_URL + '/api/auth/signup', { username, email, password });
+            const res = await api.post('/api/auth/signup', { username, email, password });
             login(res.data.token);
             navigate('/');
         } catch (err: any) {
