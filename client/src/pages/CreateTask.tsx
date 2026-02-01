@@ -1,16 +1,17 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Calendar as CalendarIcon, Clock, Tag, Plus, Check } from "lucide-react";
+import { Calendar as CalendarIcon, Clock, Tag, Plus, Check, ArrowLeft } from "lucide-react";
 import { Category } from "../types";
 import api from "../utils/api";
 
 interface DashboardContext {
     categories: Category[];
+    fetchCategories: () => void;
 }
 
 export default function CreateTask() {
-    const { categories } = useOutletContext<DashboardContext>();
+    const { categories, fetchCategories } = useOutletContext<DashboardContext>();
     const navigate = useNavigate();
 
     const [title, setTitle] = useState("");
@@ -26,27 +27,34 @@ export default function CreateTask() {
         }
     }, [categories]);
 
+    const handleCreateCategory = async () => {
+        if (!newCategoryName.trim()) return;
+        try {
+            const res = await api.post('/api/tasks/categories', {
+                name: newCategoryName
+            });
+            await fetchCategories();
+            setCategoryId(res.data._id);
+            setNewCategoryName("");
+            setIsCreatingCategory(false);
+        } catch (error) {
+            console.error("Error creating category", error);
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         try {
-            let finalCategoryId = categoryId;
-
-            // If creating a new category on the fly
-            if (isCreatingCategory && newCategoryName.trim()) {
-                const res = await api.post('/api/tasks/categories', { name: newCategoryName });
-                finalCategoryId = res.data._id;
-            }
-
-            if (!finalCategoryId) {
-                alert("Please select or create a category");
+            if (!categoryId) {
+                alert("Please select a category");
                 setLoading(false);
                 return;
             }
 
             await api.post('/api/tasks', {
                 title,
-                categoryId: finalCategoryId,
+                categoryId,
                 deadline: deadline ? new Date(deadline) : undefined
             });
 
@@ -106,14 +114,14 @@ export default function CreateTask() {
                                             <button
                                                 key={cat._id}
                                                 type="button"
-                                                onClick={() => setSelectedCategoryId(cat._id)}
-                                                className={`p - 3 rounded - xl border text - sm font - medium transition - all text - left flex items - center justify - between group ${selectedCategoryId === cat._id
-                                                        ? "bg-primary/20 border-primary text-primary"
-                                                        : "bg-card border-border text-muted-foreground hover:border-primary/50"
-                                                    } `}
+                                                onClick={() => setCategoryId(cat._id)}
+                                                className={`p-3 rounded-xl border text-sm font-medium transition-all text-left flex items-center justify-between group ${categoryId === cat._id
+                                                    ? "bg-primary/20 border-primary text-primary"
+                                                    : "bg-card border-border text-muted-foreground hover:border-primary/50"
+                                                    }`}
                                             >
                                                 {cat.name}
-                                                {selectedCategoryId === cat._id && <Check size={16} />}
+                                                {categoryId === cat._id && <Check size={16} />}
                                             </button>
                                         ))}
                                         <button
@@ -161,7 +169,7 @@ export default function CreateTask() {
                         <div className="pt-4">
                             <button
                                 type="submit"
-                                disabled={loading || !title.trim() || !selectedCategoryId}
+                                disabled={loading || !title.trim() || !categoryId}
                                 className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-semibold py-4 rounded-xl transition-all shadow-lg shadow-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                             >
                                 <Plus size={20} />
