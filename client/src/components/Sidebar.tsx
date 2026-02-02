@@ -13,11 +13,12 @@ interface SidebarProps {
     onSelectCategory: (id: string) => void;
     onAddCategory: (name: string) => void;
     onUpdateCategory?: () => void;
+    onDeleteCategory?: (id: string) => void;
     isOpen?: boolean;
     onClose?: () => void;
 }
 
-export function Sidebar({ categories, selectedCategoryId, onSelectCategory, onAddCategory, onUpdateCategory, isOpen = false, onClose }: SidebarProps) {
+export function Sidebar({ categories, selectedCategoryId, onSelectCategory, onAddCategory, onUpdateCategory, onDeleteCategory, isOpen = false, onClose }: SidebarProps) {
     const { user, logout } = useAuth();
     const { theme, setTheme } = useTheme();
     const [isAdding, setIsAdding] = useState(false);
@@ -169,10 +170,22 @@ export function Sidebar({ categories, selectedCategoryId, onSelectCategory, onAd
                                             e.stopPropagation();
                                             startEditing(cat);
                                         }}
-                                        className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-slate-500 hover:text-blue-400 opacity-0 group-hover/item:opacity-100 transition-opacity bg-card shadow-sm rounded-md border border-border"
+                                        className="absolute right-8 top-1/2 -translate-y-1/2 p-1.5 text-slate-500 hover:text-blue-400 opacity-0 group-hover/item:opacity-100 transition-opacity"
                                         title="Rename List"
                                     >
                                         <Pencil size={12} />
+                                    </button>
+                                )}
+                                {!isEditing && onDeleteCategory && (
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            onDeleteCategory(cat._id);
+                                        }}
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-slate-500 hover:text-red-400 opacity-0 group-hover/item:opacity-100 transition-opacity"
+                                        title="Delete List"
+                                    >
+                                        <LogOut size={12} className="rotate-180" />
                                     </button>
                                 )}
                             </div>

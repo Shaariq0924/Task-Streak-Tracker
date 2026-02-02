@@ -44,6 +44,19 @@ export function Layout() {
         }
     };
 
+    const handleDeleteCategory = async (id: string) => {
+        if (!confirm("Are you sure? This will delete all tasks in this list.")) return;
+        try {
+            await api.delete(`/api/tasks/categories/${id}`);
+            setCategories(categories.filter(c => c._id !== id));
+            if (selectedCategoryId === id) {
+                setSelectedCategoryId(null);
+            }
+        } catch (error) {
+            console.error("Error deleting category", error);
+        }
+    };
+
     // Shared context for children pages
     const context = {
         categories,
@@ -82,6 +95,7 @@ export function Layout() {
                 onSelectCategory={setSelectedCategoryId}
                 onAddCategory={handleAddCategory}
                 onUpdateCategory={fetchCategories}
+                onDeleteCategory={handleDeleteCategory}
                 isOpen={isSidebarOpen}
                 onClose={() => setIsSidebarOpen(false)}
             />

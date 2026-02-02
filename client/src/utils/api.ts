@@ -7,4 +7,7 @@ const api = axios.create({
     },
 });
 
+console.log('API Base URL:', api.defaults.baseURL); // Debugging
+console.log('Environment:', import.meta.env.MODE); // Debugging
+
 export default api;

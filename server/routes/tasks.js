@@ -60,6 +60,28 @@ router.post('/categories', auth, async (req, res) => {
     }
 });
 
+// @route   DELETE api/tasks/categories/:id
+// @desc    Delete a category and its tasks
+// @access  Private
+router.delete('/categories/:id', auth, async (req, res) => {
+    try {
+        const category = await TaskCategory.findById(req.params.id);
+        if (!category) return res.status(404).json({ msg: 'Category not found' });
+        if (category.userId.toString() !== req.user.id) return res.status(401).json({ msg: 'Not authorized' });
+
+        // Delete all tasks in this category
+        await Task.deleteMany({ categoryId: req.params.id });
+
+        // Delete the category
+        await category.deleteOne();
+
+        res.json({ msg: 'Category and associated tasks removed' });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
 // === TASKS ===
 
 // @route   GET api/tasks
@@ -154,9 +176,19 @@ router.put('/:id', auth, async (req, res) => {
                 let lastDate = category.lastCompletedDate ? new Date(category.lastCompletedDate) : null;
                 if (lastDate) lastDate.setHours(0, 0, 0, 0);
 
-                // If not completed today, increment streak
+                // If not completed today, update streak
                 if (!lastDate || lastDate < today) {
-                    category.currentStreak += 1;
+                    const yesterday = new Date(today);
+                    yesterday.setDate(yesterday.getDate() - 1);
+
+                    // Check if consecutive (last completed was yesterday)
+                    if (lastDate && lastDate.getTime() === yesterday.getTime()) {
+                        category.currentStreak += 1;
+                    } else {
+                        // Streak broken or new start
+                        category.currentStreak = 1;
+                    }
+
                     category.lastCompletedDate = new Date();
                     category.history.push(new Date());
                     await category.save();
