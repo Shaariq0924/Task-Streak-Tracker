@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { CheckCircle2, CalendarClock, Trophy } from "lucide-react";
 import { format } from "date-fns";
+import confetti from "canvas-confetti";
 
 export default function ConsistencyChallenge() {
     // Mock State - In real app, persist this
@@ -14,6 +15,12 @@ export default function ConsistencyChallenge() {
                 delete newState[day]; // Undo/Delete
             } else {
                 newState[day] = new Date().toISOString(); // Mark as done
+                // Trigger Confetti
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
             }
             return newState;
         });

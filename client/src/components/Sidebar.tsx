@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Flame, Hexagon, LogOut, X, LayoutDashboard, Calendar, BarChart3, Moon, Sun, PlusCircle, Pencil, Medal, Info } from "lucide-react";
+import { Plus, Hexagon, LogOut, X, LayoutDashboard, Calendar, BarChart3, Moon, Sun, PlusCircle, Pencil, Medal, Info, Search, Trash2 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
 import { motion, AnimatePresence } from "framer-motion";
@@ -25,7 +25,12 @@ export function Sidebar({ categories, selectedCategoryId, onSelectCategory, onAd
     const [newCategoryName, setNewCategoryName] = useState("");
     const [isEditing, setIsEditing] = useState<string | null>(null);
     const [editingName, setEditingName] = useState("");
+    const [searchQuery, setSearchQuery] = useState("");
     const location = useLocation();
+
+    const filteredCategories = categories.filter(cat =>
+        cat.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     const startEditing = (cat: Category) => {
         setIsEditing(cat._id);
@@ -94,7 +99,21 @@ export function Sidebar({ categories, selectedCategoryId, onSelectCategory, onAd
                     </button>
                 </div>
 
-                <div className="flex-1 overflow-y-auto px-3 space-y-6">
+                <div className="flex-1 overflow-y-auto px-3 space-y-4">
+                    {/* Sidebar Header & Search */}
+                    <div className="pb-2 pt-1">
+                        <div className="relative mb-4">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                            <input
+                                type="text"
+                                placeholder="Search lists..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="w-full bg-secondary border-none rounded-md pl-9 pr-3 py-2 text-sm focus:ring-2 focus:ring-primary/50 transition-all placeholder:text-muted-foreground/70"
+                            />
+                        </div>
+                    </div>
+
                     {/* Navigation */}
                     <div className="space-y-1">
                         <div className="text-xs font-semibold text-muted-foreground uppercase px-3 py-2">
@@ -108,8 +127,8 @@ export function Sidebar({ categories, selectedCategoryId, onSelectCategory, onAd
                                     onClose?.();
                                     if (item.path === "/") onSelectCategory(""); // Clear selection for Dashboard
                                 }}
-                                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${location.pathname === item.path && (!selectedCategoryId || item.path !== "/")
-                                    ? "bg-primary/10 text-primary font-medium"
+                                className={`w-full flex items-center gap-3 px-3 py-2 rounded-md transition-all text-sm ${location.pathname === item.path && (!selectedCategoryId || item.path !== "/")
+                                    ? "bg-blue-100 text-blue-700 font-medium dark:bg-blue-900/30 dark:text-blue-400"
                                     : "text-muted-foreground hover:bg-muted hover:text-foreground"
                                     }`}
                             >
@@ -120,20 +139,29 @@ export function Sidebar({ categories, selectedCategoryId, onSelectCategory, onAd
                     </div>
 
                     {/* Categories */}
-                    <div className="space-y-1">
-                        <div className="text-xs font-semibold text-muted-foreground uppercase px-3 py-2">
-                            Lists
+                    <div className="space-y-1 mt-6">
+                        <div className="flex items-center justify-between px-3 py-2">
+                            <div className="text-xs font-semibold text-muted-foreground uppercase">
+                                Lists
+                            </div>
+                            <button
+                                onClick={() => setIsAdding(true)}
+                                className="text-muted-foreground hover:text-primary transition-colors p-1 hover:bg-muted rounded"
+                                title="Add List"
+                            >
+                                <Plus size={14} />
+                            </button>
                         </div>
 
-                        {categories.map((cat) => (
-                            <div key={cat._id} className="group/item relative">
+                        {filteredCategories.map((cat) => (
+                            <div key={cat._id} className="group/item relative px-2">
                                 {isEditing === cat._id ? (
                                     <form
                                         onSubmit={(e) => {
                                             e.preventDefault();
                                             handleRename(cat._id);
                                         }}
-                                        className="px-3 py-2"
+                                        className="py-1"
                                     >
                                         <input
                                             autoFocus
@@ -141,7 +169,7 @@ export function Sidebar({ categories, selectedCategoryId, onSelectCategory, onAd
                                             value={editingName}
                                             onChange={(e) => setEditingName(e.target.value)}
                                             onBlur={() => handleRename(cat._id)}
-                                            className="w-full bg-slate-900 border border-blue-500 rounded-lg px-2 py-1 text-sm text-white focus:outline-none"
+                                            className="w-full bg-white dark:bg-slate-800 border-2 border-primary rounded-md px-2 py-1.5 text-sm focus:outline-none shadow-sm"
                                         />
                                     </form>
                                 ) : (
@@ -150,69 +178,54 @@ export function Sidebar({ categories, selectedCategoryId, onSelectCategory, onAd
                                             onSelectCategory(cat._id);
                                             onClose?.();
                                         }}
-                                        className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all ${selectedCategoryId === cat._id && location.pathname === "/"
-                                            ? "bg-muted text-foreground shadow-sm"
-                                            : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                                        className={`w-full flex items-center justify-between px-3 py-2 rounded-md transition-all text-sm group ${selectedCategoryId === cat._id && location.pathname === "/"
+                                            ? "bg-blue-50 text-blue-700 font-medium dark:bg-blue-900/20 dark:text-blue-400"
+                                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
                                             }`}
                                     >
-                                        <span className="font-medium truncate text-sm">{cat.name}</span>
-                                        {cat.currentStreak > 0 && (
-                                            <span className="flex items-center gap-1 text-[10px] font-bold text-orange-500 bg-orange-500/10 px-1.5 py-0.5 rounded-full">
-                                                <Flame size={10} className="fill-orange-500" />
-                                                {cat.currentStreak}
-                                            </span>
-                                        )}
+                                        <span className="truncate">{cat.name}</span>
+                                        {/* Removed Streak Icon as per request */}
                                     </button>
                                 )}
                                 {!isEditing && (
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            startEditing(cat);
-                                        }}
-                                        className="absolute right-8 top-1/2 -translate-y-1/2 p-1.5 text-slate-500 hover:text-blue-400 opacity-0 group-hover/item:opacity-100 transition-opacity"
-                                        title="Rename List"
-                                    >
-                                        <Pencil size={12} />
-                                    </button>
-                                )}
-                                {!isEditing && onDeleteCategory && (
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            onDeleteCategory(cat._id);
-                                        }}
-                                        className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-slate-500 hover:text-red-400 opacity-0 group-hover/item:opacity-100 transition-opacity"
-                                        title="Delete List"
-                                    >
-                                        <LogOut size={12} className="rotate-180" />
-                                    </button>
+                                    <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-1 opacity-0 group-hover/item:opacity-100 transition-opacity bg-background/80 backdrop-blur-sm rounded-md shadow-sm border border-border">
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                startEditing(cat);
+                                            }}
+                                            className="p-1 px-1.5 text-slate-500 hover:text-primary hover:bg-primary/10 rounded-l-md transition-all border-r border-border"
+                                            title="Rename"
+                                        >
+                                            <Pencil size={12} />
+                                        </button>
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                onDeleteCategory && onDeleteCategory(cat._id);
+                                            }}
+                                            className="p-1 px-1.5 text-slate-500 hover:text-destructive hover:bg-destructive/10 rounded-r-md transition-all"
+                                            title="Delete"
+                                        >
+                                            <Trash2 size={12} />
+                                        </button>
+                                    </div>
                                 )}
                             </div>
                         ))}
 
-                        {isAdding ? (
-                            <form onSubmit={handleAddSubmit} className="px-2 py-1">
+                        {isAdding && (
+                            <form onSubmit={handleAddSubmit} className="px-3 py-1">
                                 <input
                                     autoFocus
                                     type="text"
                                     value={newCategoryName}
                                     onChange={(e) => setNewCategoryName(e.target.value)}
                                     onBlur={() => !newCategoryName && setIsAdding(false)}
-                                    className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary text-foreground"
+                                    className="w-full bg-white dark:bg-slate-800 border-2 border-primary rounded-md px-3 py-1.5 text-sm focus:outline-none shadow-sm"
                                     placeholder="List Name..."
                                 />
                             </form>
-                        ) : (
-                            <button
-                                onClick={() => setIsAdding(true)}
-                                className="w-full flex items-center gap-2 px-3 py-2 text-muted-foreground hover:text-primary transition-colors rounded-xl hover:bg-muted group"
-                            >
-                                <div className="w-5 h-5 rounded-lg border border-dashed border-border flex items-center justify-center group-hover:border-primary/50">
-                                    <Plus size={12} />
-                                </div>
-                                <span className="text-sm font-medium">New List</span>
-                            </button>
                         )}
                     </div>
                 </div>
@@ -252,7 +265,7 @@ export function Sidebar({ categories, selectedCategoryId, onSelectCategory, onAd
                         Sign Out
                     </button>
                 </div>
-            </div>
+            </div >
         </>
     );
 }

@@ -173,13 +173,6 @@ export function TaskView({ categoryId, categories, onUpdateCategory }: TaskViewP
                             <span className="text-sm">{format(new Date(), "EEEE, MMMM do")}</span>
                         </div>
                     </div>
-                    <div className="text-right">
-                        <div className="text-4xl font-bold bg-gradient-to-br from-orange-400 to-red-500 bg-clip-text text-transparent flex justify-end items-center gap-2">
-                            <Flame className="text-orange-500 fill-orange-500" />
-                            {selectedCategory?.currentStreak || 0}
-                        </div>
-                        <div className="text-xs text-slate-500 font-medium uppercase tracking-wider mt-1">Day Streak</div>
-                    </div>
                 </div>
 
                 {/* Progress Bar */}
@@ -190,12 +183,12 @@ export function TaskView({ categoryId, categories, onUpdateCategory }: TaskViewP
                         animate={{ width: `${progress}%` }}
                         transition={{ duration: 0.5, ease: "easeOut" }}
                     />
-                </div>
+                </div >
                 <div className="flex justify-between mt-2 text-xs text-slate-500 font-medium">
                     <span>{completedCount} completed</span>
                     <span>{tasks.length - completedCount} remaining</span>
                 </div>
-            </header>
+            </header >
 
             {/* Add Task */}
             <form onSubmit={handleAddTask} className="mb-8">
@@ -300,11 +293,13 @@ export function TaskView({ categoryId, categories, onUpdateCategory }: TaskViewP
                     ))}
                 </AnimatePresence>
 
-                {tasks.length === 0 && !loading && (
-                    <div className="text-center py-12 text-slate-600">
-                        <p>No tasks yet. Add one to get started!</p>
-                    </div>
-                )}
+                {
+                    tasks.length === 0 && !loading && (
+                        <div className="text-center py-12 text-slate-600">
+                            <p>No tasks yet. Add one to get started!</p>
+                        </div>
+                    )
+                }
             </div>
         </div>
     );

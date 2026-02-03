@@ -177,6 +177,40 @@ export default function Dashboard() {
                     </div>
                 </motion.div>
             </div>
-        </div>
+
+            {/* About Section (Embedded) */}
+            <div className="mt-12 pt-8 border-t border-border">
+                <h2 className="text-2xl font-bold mb-6 text-slate-900 dark:text-white">About TaskStreak</h2>
+                <div className="grid md:grid-cols-3 gap-6">
+                    <div className="glass p-6 rounded-xl space-y-3">
+                        <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                            <TrendingUp size={20} />
+                        </div>
+                        <h3 className="font-bold text-slate-900 dark:text-white">Build Momentum</h3>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">
+                            Streak tracking and challenge modes gamified to keep you showing up every day.
+                        </p>
+                    </div>
+                    <div className="glass p-6 rounded-xl space-y-3">
+                        <div className="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400">
+                            <Award size={20} />
+                        </div>
+                        <h3 className="font-bold text-slate-900 dark:text-white">Stay Focused</h3>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">
+                            A clean, distraction-free interface designed for clarity and focus.
+                        </p>
+                    </div>
+                    <div className="glass p-6 rounded-xl space-y-3">
+                        <div className="w-10 h-10 rounded-lg bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 dark:text-orange-400">
+                            <Calendar size={20} />
+                        </div>
+                        <h3 className="font-bold text-slate-900 dark:text-white">Track Growth</h3>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">
+                            Visual analytics give you a clear picture of your habits over time.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div >
     );
 }

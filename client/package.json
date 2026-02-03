@@ -10,14 +10,17 @@
         "preview": "vite preview"
     },
     "dependencies": {
+        "@types/canvas-confetti": "^1.9.0",
         "axios": "^1.6.7",
+        "canvas-confetti": "^1.9.4",
+        "clsx": "*",
+        "date-fns": "*",
+        "framer-motion": "*",
+        "lucide-react": "*",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "react-router-dom": "^6.20.0",
-        "framer-motion": "*",
-        "lucide-react": "*",
-        "date-fns": "*",
-        "clsx": "*",
+        "recharts": "^3.7.0",
         "tailwind-merge": "*"
     },
     "devDependencies": {

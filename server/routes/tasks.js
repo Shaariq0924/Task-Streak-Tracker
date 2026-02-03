@@ -85,12 +85,31 @@ router.delete('/categories/:id', auth, async (req, res) => {
 // === TASKS ===
 
 // @route   GET api/tasks
-// @desc    Get all tasks for user
+// @desc    Get all tasks for user (Daily Reset Logic)
 // @access  Private
 router.get('/', auth, async (req, res) => {
     try {
         const tasks = await Task.find({ userId: req.user.id }).sort({ createdAt: -1 });
-        res.json(tasks);
+
+        // Daily Reset: If a task was completed BEFORE today, reset it to active.
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const resetTasks = await Promise.all(tasks.map(async (task) => {
+            if (task.isCompleted && task.completedAt) {
+                const completedDate = new Date(task.completedAt);
+                completedDate.setHours(0, 0, 0, 0);
+
+                if (completedDate < today) {
+                    task.isCompleted = false;
+                    task.completedAt = null;
+                    await task.save();
+                }
+            }
+            return task;
+        }));
+
+        res.json(resetTasks);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
