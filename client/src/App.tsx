@@ -10,6 +10,7 @@ import { Layout } from './components/Layout';
 import CreateTask from './pages/CreateTask';
 import ConsistencyChallenge from './pages/ConsistencyChallenge';
 import About from './pages/About';
+import DSAChecklist from './pages/DSAChecklist';
 
 function PrivateRoute({ children }: { children: JSX.Element }) {
     const { token, loading } = useAuth();
@@ -41,6 +42,7 @@ function App() {
                 <Route path="challenge" element={<ConsistencyChallenge />} />
                 <Route path="about" element={<About />} />
                 <Route path="create-task" element={<CreateTask />} />
+                <Route path="dsa" element={<DSAChecklist />} />
             </Route>
         </Routes>
     );

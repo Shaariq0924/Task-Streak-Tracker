@@ -29,3 +29,16 @@ yarn-error.log*
 # Editor
 .vscode
 .idea
+
+# Python (if any)
+__pycache__/
+*.py[cod]
+*$py.class
+
+# MongoDB Data
+data/
+db/
+
+# Temp files
+*.log
+query

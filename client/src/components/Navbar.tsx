@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
 import {
     LayoutDashboard, Calendar, BarChart3, Medal, Info,
-    Search, LogOut, Hexagon, Plus, ChevronDown
+    Search, LogOut, Hexagon, Plus, ChevronDown, Code2
 } from "lucide-react";
 import { Category } from "../types";
 import { motion, AnimatePresence } from "framer-motion";
@@ -29,6 +29,7 @@ export function Navbar({ categories, onSelectCategory, onAddCategory }: NavbarPr
         { icon: Calendar, label: "Calendar", path: "/calendar" },
         { icon: BarChart3, label: "Analytics", path: "/analytics" },
         { icon: Medal, label: "Challenge", path: "/challenge" },
+        { icon: Code2, label: "DSA", path: "/dsa" },
         { icon: Info, label: "Info", path: "/about" },
     ];
 
@@ -53,8 +54,8 @@ export function Navbar({ categories, onSelectCategory, onAddCategory }: NavbarPr
                             key={item.path}
                             to={item.path}
                             className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all ${location.pathname === item.path
-                                    ? "bg-primary/10 text-primary"
-                                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                                ? "bg-primary/10 text-primary"
+                                : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                                 }`}
                         >
                             <item.icon size={16} />
