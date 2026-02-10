@@ -1,22 +1,24 @@
 import { useState, useEffect } from 'react';
-import { useOutletContext } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Trophy, Code2, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Trophy, Code2, Sparkles } from 'lucide-react';
 import checklistData from '../data/dsa-checklist.json';
 import { TopicGroup } from '../components/DSAChecklist/TopicGroup';
-import Confetti from 'react-confetti';
-import { useWindowSize } from 'react-use'; // Assuming react-use might be installed, or we can use a custom hook. 
-// Actually, let's not assume external libs if not sure. I'll use a simple confetti or skip it if package not found.
-// I will skip Confetti for now to avoid package issues, or implement a simple one.
 
-interface ChecklistContext {
-    user: any;
+interface Problem {
+    title: string;
+    link: string;
+    difficulty: string;
 }
 
+interface Topic {
+    topic: string;
+    problems: Problem[];
+}
+
+const typedChecklistData = checklistData as Topic[];
+
 export default function DSAChecklist() {
-    const { user } = useOutletContext<ChecklistContext>();
     const [completedProblems, setCompletedProblems] = useState<Set<string>>(new Set());
-    const [showConfetti, setShowConfetti] = useState(false);
 
     // Load progress from localStorage
     useEffect(() => {
@@ -38,14 +40,13 @@ export default function DSAChecklist() {
                 newSet.delete(title);
             } else {
                 newSet.add(title);
-                // Trigger mini celebration or check for major milestones here
             }
             return newSet;
         });
     };
 
     // Calculate total stats
-    const totalProblems = checklistData.reduce((acc, topic) => acc + topic.problems.length, 0);
+    const totalProblems = typedChecklistData.reduce((acc, topic) => acc + topic.problems.length, 0);
     const totalCompleted = completedProblems.size;
     const globalProgress = Math.round((totalCompleted / totalProblems) * 100);
 
@@ -106,7 +107,7 @@ export default function DSAChecklist() {
 
                 {/* Topics Grid */}
                 <div className="space-y-6">
-                    {checklistData.map((topic, idx) => (
+                    {typedChecklistData.map((topic, idx) => (
                         <TopicGroup
                             key={topic.topic}
                             topicData={topic}

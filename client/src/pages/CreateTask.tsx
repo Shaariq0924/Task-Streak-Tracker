@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Calendar as CalendarIcon, Clock, Tag, Plus, Check, ArrowLeft } from "lucide-react";
+import { Plus, Check, ArrowLeft } from "lucide-react";
 import { Category } from "../types";
 import api from "../utils/api";
 
@@ -16,7 +16,7 @@ export default function CreateTask() {
 
     const [title, setTitle] = useState("");
     const [categoryId, setCategoryId] = useState("");
-    const [deadline, setDeadline] = useState("");
+    const [deadline] = useState("");
     const [isCreatingCategory, setIsCreatingCategory] = useState(false);
     const [newCategoryName, setNewCategoryName] = useState("");
     const [loading, setLoading] = useState(false);
